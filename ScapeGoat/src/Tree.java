@@ -51,17 +51,24 @@ public class Tree {
 			return false;
 		}
 		
-		return(search(tree.root, key));
+		if(search(tree.root, key) == null) return false;
+		else return true;
 		
 	}
 	
 	//----- Node Search -----//
-	private boolean search(final Node n, final int key){
+	private Node search(final Node n, final int key){
 		
-		if(n == null) return false;
-		if(n.getKey() == key) return true;
+		Node found = null;
 		
-		return(search(n.getLeft(), key)||search(n.getRight(), key));
+		if(n == null) return null;
+		if(n.getKey() == key) return n;
+		
+		found = search(n.getLeft(), key);
+		if(found == null)
+			found = search(n.getRight(), key);
+		
+		return(found);
 	
 	}
 	
@@ -76,7 +83,7 @@ public class Tree {
 		traverse(tree.root);
 		
 	}
-	//----- Tree Traverse -----//
+	//----- Node Traverse -----//
 	private void traverse(final Node n){
 		
 		if(n == null) return;
@@ -88,4 +95,18 @@ public class Tree {
 		return;
 	}
 
+	//----- Tree Delete -----//
+//	public void delete(final Tree tree, final int key){
+//		if(tree == null){
+//			System.out.println("DELETE: tree is null.");
+//			return;
+//		}
+//		
+//		delete(tree.root, key);
+//	}
+//	
+//	private void delete(final Node n, ){
+//		
+//	}
+	
 }
