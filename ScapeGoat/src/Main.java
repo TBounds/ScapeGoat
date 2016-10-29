@@ -3,11 +3,11 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		Node root = new Node(9, null);
+		Tree t = new Tree(0.71f, 9);
 		
-		root.setLeft(new Node(11, root));
 		
-		System.out.println("root = " + root.getParent() + ", data = " + root.getData() + ", left = " + root.getLeft() + ", right = " + root.getRight());
+		
+		//System.out.println("root = " + root.getParent() + ", data = " + root.getData() + ", left = " + root.getLeft() + ", right = " + root.getRight());
 		
 	}
 
