@@ -1,9 +1,11 @@
 
 public class Tree {
 	
+	private boolean found;	// Test
 	private Node root;
 	private Float alpha;
 	
+	//----- Tree Constructor -----//
 	public Tree(final float alpha, final int key){
 		
 		this.alpha = alpha;
@@ -24,7 +26,7 @@ public class Tree {
 					p = p.getLeft();
 				else{
 					p.setLeft(new Node(key));
-					p.getLeft().setParent(p.getLeft());
+					p.getLeft().setParent(p);
 					return;
 				}
 					
@@ -34,7 +36,7 @@ public class Tree {
 					p = p.getRight();
 				else{
 					p.setRight(new Node(key));
-					p.getRight().setParent(p.getRight());
+					p.getRight().setParent(p);
 					return;
 				}
 			}
@@ -57,15 +59,33 @@ public class Tree {
 	private boolean search(final Node n, final int key){
 		
 		if(n == null) return false;
-		
 		if(n.getKey() == key) return true;
 		
-		search(n.getLeft(), key);
-		search(n.getRight(), key);
-		
-		return false;
+		return(search(n.getLeft(), key)||search(n.getRight(), key));
+	
 	}
 	
-	//----- Traverse -----//
+	//----- Tree Traverse -----//
+	public void traverse(final Tree tree){
+		
+		if(tree == null){
+			System.out.println("TRAVERSE: null tree.");
+			return;
+		}
+		
+		traverse(tree.root);
+		
+	}
+	//----- Tree Traverse -----//
+	private void traverse(final Node n){
+		
+		if(n == null) return;
+		
+		System.out.println(n.getKey());
+		traverse(n.getLeft());
+		traverse(n.getRight());
+		
+		return;
+	}
 
 }
