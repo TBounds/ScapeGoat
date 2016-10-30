@@ -36,8 +36,11 @@ public class Tree {
 					p.setLeft(new Node(key));
 					p.getLeft().setParent(p);
 					
-					if(tooDeep(p.getLeft()))
-						findScapeGoat(tree, p.getLeft()); 
+					// Check if the inserted node is too deep.
+					if(tooDeep(p.getLeft())){
+						rebuildTree(p.getLeft(), findScapeGoat(tree, p.getLeft())); 
+					}
+						
 					
 					return;
 				}
@@ -50,8 +53,10 @@ public class Tree {
 					p.setRight(new Node(key));
 					p.getRight().setParent(p);
 					
-					if(tooDeep(p.getRight()))
-						findScapeGoat(tree, p.getRight());
+					if(tooDeep(p.getRight())){
+						rebuildTree(p.getRight(), findScapeGoat(tree, p.getRight()));
+					}
+						
 					
 					return;
 				}
@@ -106,11 +111,11 @@ public class Tree {
 		
 		if(n == null) return;
 		
-		System.out.println(n.getKey());
+		//System.out.println(n.getKey());
 		
 		// DEBUG
-		// if(n.getParent() != null) System.out.println(n.getKey() + ", parent = " + n.getParent().getKey()); 
-		// else System.out.println(n.getKey() + ", parent = null");
+		if(n.getParent() != null) System.out.println(n.getKey() + ", parent = " + n.getParent().getKey()); 
+		else System.out.println(n.getKey() + ", parent = null");
 		
 		traverse(n.getLeft());
 		traverse(n.getRight());
@@ -243,9 +248,9 @@ public class Tree {
 			p = p.getParent();
 		}
 		
-		System.out.println("node = " + n.getKey() + ", count = " + 1 + ", node Count = " + getNodeCount() + ", math thing = " + ((Math.log(getNodeCount())/Math.log(1/alpha))));	// DEBUG
+		System.out.println("node = " + n.getKey() + ", count = " + count + ", node Count = " + getNodeCount() + ", math thing = " + (Math.floor((Math.log(getNodeCount())/Math.log(1/alpha)))));	// DEBUG
 		
-		if(count > (Math.log(getNodeCount())/Math.log(1/alpha)))
+		if(count > Math.floor((Math.log(getNodeCount())/Math.log(1/alpha))))
 			return true;
 		else
 			return false;
@@ -283,15 +288,30 @@ public class Tree {
 	}
 
 	//-----  Flatten -----//
-	private List<Node> flatten(Node n, List<Node> subtreeList){
+	private Node flatten(Node x, Node y){
 		
-		if(n == null) return null;
+		if(x == null) return y;
+		x.setRight(flatten(x.getRight(), y));
+		return flatten(x.getLeft(), x);
 		
-		flatten(n.getLeft(), subtreeList);
-		subtreeList.add(n);
-		flatten(n.getRight(), subtreeList);
+	}
+	
+	//----- Rebuild -----//
+	private Node rebuildTree(Node n, Node scapeGoat){
+		Node w = null;
+		Node z = flatten(scapeGoat, w);
 		
-		return subtreeList;
+		// DEBUG
+		Node p = z;
+		while(p != null){
+			System.out.println(p.getKey());
+			p = p.getRight();
+		}
+			
+//		buildTree(n, z);
+//		return w.getLeft();
+		
+		return null;
 		
 	}
 	
