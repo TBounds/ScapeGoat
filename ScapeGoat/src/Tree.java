@@ -1,4 +1,9 @@
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+
+import javax.swing.tree.TreeNode;
 
 public class Tree {
 	
@@ -38,13 +43,15 @@ public class Tree {
 					
 					// Check if the inserted node is too deep.
 					if(tooDeep(p.getLeft())){
-						rebuildTree(p.getLeft(), findScapeGoat(tree, p.getLeft())); 
-					}
+						Node SG = findScapeGoat(tree, p.getLeft());
 						
+						System.out.println("\nCalling rebuild.");
+						rebuildTree(size(SG), SG); 
+					}
 					
 					return;
 				}
-					
+				
 			}
 			else if(key > p.getKey()){	 
 				if(p.getRight() != null) 
@@ -54,9 +61,10 @@ public class Tree {
 					p.getRight().setParent(p);
 					
 					if(tooDeep(p.getRight())){
-						rebuildTree(p.getRight(), findScapeGoat(tree, p.getRight()));
+						Node SG = findScapeGoat(tree, p.getRight());
+						System.out.println("Calling rebuild.");
+						rebuildTree(size(SG), SG); 
 					}
-						
 					
 					return;
 				}
@@ -106,6 +114,7 @@ public class Tree {
 		traverse(tree.root);
 		
 	}
+	
 	//----- Node Traverse -----//
 	private void traverse(final Node n){
 		
@@ -114,8 +123,16 @@ public class Tree {
 		//System.out.println(n.getKey());
 		
 		// DEBUG
-		if(n.getParent() != null) System.out.println(n.getKey() + ", parent = " + n.getParent().getKey()); 
-		else System.out.println(n.getKey() + ", parent = null");
+		if(n.getParent() != null) System.out.print(n.getKey() + ": parent = " + n.getParent().getKey()); 
+		else System.out.print(n.getKey() + ": parent = null");
+	
+		if(n.getLeft() != null) System.out.print(", left child = " + n.getLeft().getKey() + " "); 
+		else System.out.print(", left child = null ");
+		
+		if(n.getRight() != null) System.out.print(", right child = " + n.getRight().getKey() + " "); 
+		else System.out.print(", right child = null ");
+		
+		System.out.println(" ");
 		
 		traverse(n.getLeft());
 		traverse(n.getRight());
@@ -134,6 +151,8 @@ public class Tree {
 		}
 
 		delete(tree, tree.root, key);
+		
+		// fixParents(tree.root);
 	}
 	
 	//----- Node Delete -----//
@@ -229,7 +248,6 @@ public class Tree {
 	}
 	
 	//----- Size -----//
-	/* Change to private */
 	private int size(Node n){
 		if(n == null) return 0;
 		return (size(n.getLeft()) + size(n.getRight()) + 1);
@@ -280,14 +298,13 @@ public class Tree {
 //				System.out.println("scapeGoat = node " + scapeGoat.getKey());
 //			else
 //				System.out.println("ScapeGoat == null.");
+			
 		}
-		
-		
 		
 		return scapeGoat;
 	}
 
-	//-----  Flatten -----//
+	//----- Flatten -----//
 	private Node flatten(Node x, Node y){
 		
 		if(x == null) return y;
@@ -296,24 +313,136 @@ public class Tree {
 		
 	}
 	
+	/* Build breaks everything */
+	//----- Build Tree -----//
+	private Node buildTree(int n, Node x){
+		if(n == 0){
+			x.setLeft(null);
+			return x;
+		}
+		
+		Node r = buildTree((int)Math.ceil((n-1)/2), x);
+		if(r.getRight() == null) System.out.println("r.getRight() == null");
+		Node s = buildTree((int)Math.floor((n-1)/2), r.getRight());
+		
+		// DEBUG
+//		System.out.println("r = " + r.getKey() + ", s = " + s.getKey());
+//		if(r.getLeft() != null)
+//			System.out.print("r.left = " + r.getLeft().getKey());
+//		if(r.getRight() != null)
+//			System.out.print(" r.right = " + r.getRight().getKey());
+//		if(s.getLeft() != null)
+//			System.out.print(" s.left = " + s.getLeft().getKey());
+//		if(s.getRight() != null)
+//			System.out.print(" s.left = " + s.getRight().getKey());
+//		System.out.println(" ");
+		
+		r.setRight(s.getLeft());
+//		if(r.getRight() != null)
+//			System.out.println(r.getRight().getKey());
+		s.setLeft(r);
+//		if(s.getLeft() != null)
+//			System.out.println(s.getLeft().getKey());
+		
+		return s;
+		
+	}
+	
 	//----- Rebuild -----//
-	private Node rebuildTree(Node n, Node scapeGoat){
+	private Node rebuildTree(int n, Node scapeGoat){
 		Node w = null;
 		Node z = flatten(scapeGoat, w);
+		
+		Node temp = null;
+		
+		// DEBUG
+		System.out.println("Flatten.");
 		
 		// DEBUG
 		Node p = z;
 		while(p != null){
-			System.out.println(p.getKey());
+			System.out.print(p.getKey() + " ");
 			p = p.getRight();
 		}
-			
-//		buildTree(n, z);
-//		return w.getLeft();
+		System.out.println("");
 		
-		return null;
+//		System.out.println("Return from buildTree = " + buildTree(n, z).getKey());
+//		System.out.println("ScapeGoat = " + scapeGoat.getKey());
+		
+		temp = buildTree(n, z);	// temp = the node that gets left out
+		
+		scapeGoat.getParent().setRight(temp);
+		temp.setParent(scapeGoat.getParent());
+		temp.setLeft(scapeGoat);
+
+		fixParents(temp);
+		
+		return z.getLeft();
+
+	}
+	
+	//----- Tree Print Tree -----//
+	public void printTree(final Tree tree) {
+		
+		if(tree != null)
+			printTree(tree.getRoot(), 0);
+	}
+	
+	//----- Node Print Tree -----//
+	public void printTree(final Node n, int level){
+		
+		if(n == null) return;
+		
+		printTree(n.getRight(), level + 1);
+		for(int i = 0; i < level*3; i++) System.out.print(" ");
+		System.out.println(n.getKey());
+		printTree(n.getLeft(), level + 1);
+		
+		return;
+	}
+	
+	//----- Fix Parents -----//
+	public void fixParents(Node n){
+		
+		if(n == null) return;
+		
+		// Fix parents.
+		if(n.getLeft() != null) n.getLeft().setParent(n);
+		if(n.getRight() != null) n.getRight().setParent(n);
+		
+		fixParents(n.getLeft());
+		fixParents(n.getRight());
+		
+		return;
 		
 	}
+	
+//	public void printTree(Node tmpRoot) {
+//
+//        Queue<Node> currentLevel = new LinkedList<Node>();
+//        Queue<Node> nextLevel = new LinkedList<Node>();
+//
+//        currentLevel.add(tmpRoot);
+//
+//        while (!currentLevel.isEmpty()) {
+//            Iterator<Node> iter = currentLevel.iterator();
+//            while (iter.hasNext()) {
+//                Node currentNode = iter.next();
+//                if (currentNode.getLeft() != null) {
+//                    nextLevel.add(currentNode.getLeft());
+//                }
+//                if (currentNode.getRight() != null) {
+//                    nextLevel.add(currentNode.getRight());
+//                }
+//                System.out.print(currentNode.getKey() + " ");
+//            }
+//            System.out.println();
+//            currentLevel = nextLevel;
+//            nextLevel = new LinkedList<Node>();
+//
+//        }
+//
+//    }
 	
 	//----- Setters and Getters -----//
 	public Node getRoot() { return root; }
