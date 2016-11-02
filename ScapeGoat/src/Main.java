@@ -44,21 +44,48 @@ public class Main {
 //		tree.insert(tree, 2);
 //		tree.insert(tree, 5);
 		
+		//----- Duplicate Nodes -----//
+//		tree.insert(tree, 3);
+//		tree.insert(tree, 0);
+//		tree.insert(tree, 4);
+//		tree.insert(tree, 2);
+//		tree.insert(tree, 6);
+//		tree.insert(tree, 5);
+		
 		//----- Null Pointer Input -----//
 		tree.insert(tree, 3);
+		tree.traverse(tree);
+		System.out.println("---------------------------------------------");
 		tree.insert(tree, 0);
+		tree.traverse(tree);
+		System.out.println("---------------------------------------------");
 		tree.insert(tree, 4);
+		tree.traverse(tree);
+		System.out.println("---------------------------------------------");
 		tree.insert(tree, 2);
+		tree.traverse(tree);
+		System.out.println("---------------------------------------------");
 		tree.insert(tree, 5);
+		tree.traverse(tree);
+		System.out.println("---------------------------------------------");
 		tree.insert(tree, 7);
+		tree.traverse(tree);
+		System.out.println("---------------------------------------------");
+//		tree.insert(tree, 6);
+//		tree.traverse(tree);
+//		System.out.println("---------------------------------------------");
 		tree.insert(tree, 9);
+		tree.traverse(tree);
+		System.out.println("---------------------------------------------");
 		tree.insert(tree, 8);
+		tree.traverse(tree);
+		System.out.println("---------------------------------------------");
 		
 		tree.traverse(tree);
 		System.out.println("---------------------------------------------");
 		tree.printTree(tree);
 		System.out.println("---------------------------------------------");
-		
+
 		// System.out.println(tree.search(tree, 5));
 		
 		// System.out.println("tree root = " + tree.getRoot().getKey());

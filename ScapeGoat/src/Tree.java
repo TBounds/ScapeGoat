@@ -152,7 +152,7 @@ public class Tree {
 
 		delete(tree, tree.root, key);
 		
-		// fixParents(tree.root);
+		fixParents(tree.root);
 	}
 	
 	//----- Node Delete -----//
@@ -266,7 +266,7 @@ public class Tree {
 			p = p.getParent();
 		}
 		
-		System.out.println("node = " + n.getKey() + ", count = " + count + ", node Count = " + getNodeCount() + ", math thing = " + (Math.floor((Math.log(getNodeCount())/Math.log(1/alpha)))));	// DEBUG
+//		System.out.println("node = " + n.getKey() + ", count = " + count + ", node Count = " + getNodeCount() + ", math thing = " + (Math.floor((Math.log(getNodeCount())/Math.log(1/alpha)))));	// DEBUG
 		
 		if(count > Math.floor((Math.log(getNodeCount())/Math.log(1/alpha))))
 			return true;
@@ -280,12 +280,15 @@ public class Tree {
 		Node scapeGoat = null;
 		Node p = null;
 		
+		// scapeGoat needs to start above the node passed in.
 		if(n.getParent() != null) 
 			p = n.getParent();
 		
 //		int size, sizeL, sizeR;
 //		size = size(p);
 		
+		
+		// Find the scapeGoat nearest to the root (but not the root).
 		while(p.getParent() != null){
 			if((size(p.getLeft()) <= tree.alpha * size(p)) &&
 					(size(p.getRight()) <= tree.alpha*size(p))){
@@ -318,33 +321,21 @@ public class Tree {
 	/* Build breaks everything */
 	//----- Build Tree -----//
 	private Node buildTree(int n, Node x){
+		
+//		if(n == 1){
+//			return x;
+//		}
+		
 		if(n == 0){
 			x.setLeft(null);
 			return x;
 		}
 		
 		Node r = buildTree((int)Math.ceil((n-1)/2), x);
-		if(r.getRight() == null) System.out.println("r.getRight() == null");
 		Node s = buildTree((int)Math.floor((n-1)/2), r.getRight());
 		
-		// DEBUG
-//		System.out.println("r = " + r.getKey() + ", s = " + s.getKey());
-//		if(r.getLeft() != null)
-//			System.out.print("r.left = " + r.getLeft().getKey());
-//		if(r.getRight() != null)
-//			System.out.print(" r.right = " + r.getRight().getKey());
-//		if(s.getLeft() != null)
-//			System.out.print(" s.left = " + s.getLeft().getKey());
-//		if(s.getRight() != null)
-//			System.out.print(" s.left = " + s.getRight().getKey());
-//		System.out.println(" ");
-		
 		r.setRight(s.getLeft());
-//		if(r.getRight() != null)
-//			System.out.println(r.getRight().getKey());
 		s.setLeft(r);
-//		if(s.getLeft() != null)
-//			System.out.println(s.getLeft().getKey());
 		
 		return s;
 		
@@ -353,36 +344,19 @@ public class Tree {
 	//----- Rebuild -----//
 	private Node rebuildTree(int n, Node scapeGoat){
 		
-		Node w = new Node(-1);
+		System.out.println("RebuildTree n = " + n + " scapeGoat = " + scapeGoat.getKey());	// DEBUG
+		
+		// Node w = new Node(-1);
+		Node w = null;
 		
 		Node p = null; // test
-		Node k = null;
 		
-		System.out.println("w key = " + w.getKey());
-		
-		// Node w = null;
 		Node z = flatten(scapeGoat, w);
-		
-		p = z; k = z;
-		while(p != null){
-			p = p.getRight();
-			if(p.getKey() == -1){
-				k.setRight(null);
-				if(p.getRight() != null)
-					p = p.getRight();
-				else
-					break;
-			}
-			if(k.getRight() != null)
-				k = k.getRight();
-		}
 		
 		Node temp = null;
 		
 		// DEBUG
-		System.out.println("Flatten.");
-		
-		// DEBUG
+		System.out.print("Flatten List: ");
 		p = z;
 		while(p != null){
 			System.out.print(p.getKey() + " ");
@@ -394,8 +368,11 @@ public class Tree {
 		
 		temp = buildTree(n, z);	// temp = the node that gets left out
 		
+		System.out.println("Print the subtree returned from buildTree.");
+		printTree(temp, 0);
+		
 		System.out.println("Return from buildTree = " + temp.getKey());
-		System.out.println("ScapeGoat = " + scapeGoat.getKey());
+// 		System.out.println("ScapeGoat = " + scapeGoat.getKey());
 		
 		if(temp != scapeGoat){
 			scapeGoat.getParent().setRight(temp);
@@ -405,12 +382,16 @@ public class Tree {
 			fixParents(temp);
 		}
 		
+		
+		
 		// maxNodeCount = nodeCount;
 
-		if(w != null)
-			return w.getLeft();
+//		if(w != null)
+//		return w.getLeft();
 		
-		return null;
+		return temp;
+		
+// 		return null;
 
 	}
 	
@@ -426,7 +407,11 @@ public class Tree {
 		
 		if(n == null) return;
 		
-		printTree(n.getRight(), level + 1);
+		if(n.getRight() != n)
+			printTree(n.getRight(), level + 1);
+		else{
+			n.setRight(null);
+		}
 		for(int i = 0; i < level*3; i++) System.out.print(" ");
 		System.out.println(n.getKey());
 		printTree(n.getLeft(), level + 1);
@@ -450,32 +435,6 @@ public class Tree {
 		
 	}
 	
-//	public void printTree(Node tmpRoot) {
-//
-//        Queue<Node> currentLevel = new LinkedList<Node>();
-//        Queue<Node> nextLevel = new LinkedList<Node>();
-//
-//        currentLevel.add(tmpRoot);
-//
-//        while (!currentLevel.isEmpty()) {
-//            Iterator<Node> iter = currentLevel.iterator();
-//            while (iter.hasNext()) {
-//                Node currentNode = iter.next();
-//                if (currentNode.getLeft() != null) {
-//                    nextLevel.add(currentNode.getLeft());
-//                }
-//                if (currentNode.getRight() != null) {
-//                    nextLevel.add(currentNode.getRight());
-//                }
-//                System.out.print(currentNode.getKey() + " ");
-//            }
-//            System.out.println();
-//            currentLevel = nextLevel;
-//            nextLevel = new LinkedList<Node>();
-//
-//        }
-//
-//    }
 	
 	//----- Setters and Getters -----//
 	public Node getRoot() { return root; }
