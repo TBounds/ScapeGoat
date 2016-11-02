@@ -373,13 +373,13 @@ public class Tree {
 		System.out.println("Return from buildTree = " + temp.getKey());
 		System.out.println("ScapeGoat = " + scapeGoat.getKey());
 		
-		if(temp != scapeGoat){
+//		if(temp != scapeGoat){
 //			scapeGoat.getParent().setRight(temp);
 //			temp.setParent(scapeGoat.getParent());
 //			temp.setLeft(scapeGoat);
 //
 //			fixParents(temp);
-		}
+//		}
 
 		
 		return z.getLeft();
