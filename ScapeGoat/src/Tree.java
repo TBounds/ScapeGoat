@@ -308,7 +308,9 @@ public class Tree {
 	private Node flatten(Node x, Node y){
 		
 		if(x == null) return y;
+		
 		x.setRight(flatten(x.getRight(), y));
+		
 		return flatten(x.getLeft(), x);
 		
 	}
@@ -350,8 +352,30 @@ public class Tree {
 	
 	//----- Rebuild -----//
 	private Node rebuildTree(int n, Node scapeGoat){
-		Node w = null;
+		
+		Node w = new Node(-1);
+		
+		Node p = null; // test
+		Node k = null;
+		
+		System.out.println("w key = " + w.getKey());
+		
+		// Node w = null;
 		Node z = flatten(scapeGoat, w);
+		
+		p = z; k = z;
+		while(p != null){
+			p = p.getRight();
+			if(p.getKey() == -1){
+				k.setRight(null);
+				if(p.getRight() != null)
+					p = p.getRight();
+				else
+					break;
+			}
+			if(k.getRight() != null)
+				k = k.getRight();
+		}
 		
 		Node temp = null;
 		
@@ -359,7 +383,7 @@ public class Tree {
 		System.out.println("Flatten.");
 		
 		// DEBUG
-		Node p = z;
+		p = z;
 		while(p != null){
 			System.out.print(p.getKey() + " ");
 			p = p.getRight();
@@ -373,16 +397,20 @@ public class Tree {
 		System.out.println("Return from buildTree = " + temp.getKey());
 		System.out.println("ScapeGoat = " + scapeGoat.getKey());
 		
-//		if(temp != scapeGoat){
-//			scapeGoat.getParent().setRight(temp);
-//			temp.setParent(scapeGoat.getParent());
-//			temp.setLeft(scapeGoat);
-//
-//			fixParents(temp);
-//		}
+		if(temp != scapeGoat){
+			scapeGoat.getParent().setRight(temp);
+			temp.setParent(scapeGoat.getParent());
+			temp.setLeft(scapeGoat);
 
+			fixParents(temp);
+		}
 		
-		return z.getLeft();
+		// maxNodeCount = nodeCount;
+
+		if(w != null)
+			return w.getLeft();
+		
+		return null;
 
 	}
 	

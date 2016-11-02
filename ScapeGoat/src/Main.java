@@ -7,6 +7,14 @@ public class Main {
 		 * Slide 14: nodeCount, maxNodeCount, rebalance on deletion
 		 * Slide 18: Flatten
 		 * 
+		 * XXX Save the -1 nodes in an arraylist, then after the tree is rebuilt, remove them.
+		 * 
+		 * XXX After deleting something
+		 * 	• Decrement size[T]
+		 * 	• Then, if size[T] < alpha * max_size[T] rebuild the tree and set max_size[T] = size[T]
+		 * 
+		 * XXX Everytime the tree is rebuilt, max_size[T] = size[T]
+		 * 
 		 * Check if you need to rebalance, if you do, find a scapegoat
 		 * 
 		 * XXX DELETE DOESN'T WORK
