@@ -9,6 +9,19 @@ public class Main {
 		 * 
 		 * Check if you need to rebalance, if you do, find a scapegoat
 		 * 
+		 * XXX DELETE DOESN'T WORK
+		 * 
+		 *  tree.insert(tree, 3);
+			tree.insert(tree, 0);
+			tree.insert(tree, 4);
+			tree.insert(tree, 2);
+			tree.insert(tree, 5);
+			tree.insert(tree, 7);
+			tree.insert(tree, 9);
+			tree.insert(tree, 8);
+			tree.delete(tree, 4);
+			tree.traverse();
+		 * 
 		 * XXX Parents are going to be jacked up. Redo parents from the scapeGoat node.
 		 * 
 		 * fixParents after delete and rebuild
@@ -36,6 +49,7 @@ public class Main {
 		tree.traverse(tree);
 		System.out.println("---------------------------------------------");
 		tree.printTree(tree);
+		System.out.println("---------------------------------------------");
 		
 		// System.out.println(tree.search(tree, 5));
 		

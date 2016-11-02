@@ -366,16 +366,21 @@ public class Tree {
 		}
 		System.out.println("");
 		
-//		System.out.println("Return from buildTree = " + buildTree(n, z).getKey());
-//		System.out.println("ScapeGoat = " + scapeGoat.getKey());
+//		buildTree(n, z);
 		
 		temp = buildTree(n, z);	// temp = the node that gets left out
 		
-		scapeGoat.getParent().setRight(temp);
-		temp.setParent(scapeGoat.getParent());
-		temp.setLeft(scapeGoat);
+		System.out.println("Return from buildTree = " + temp.getKey());
+		System.out.println("ScapeGoat = " + scapeGoat.getKey());
+		
+		if(temp != scapeGoat){
+//			scapeGoat.getParent().setRight(temp);
+//			temp.setParent(scapeGoat.getParent());
+//			temp.setLeft(scapeGoat);
+//
+//			fixParents(temp);
+		}
 
-		fixParents(temp);
 		
 		return z.getLeft();
 
