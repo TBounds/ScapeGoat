@@ -1,19 +1,11 @@
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
-import javax.swing.tree.TreeNode;
-
 public class Tree {
 	
-	private boolean found;	// Test
 	private Node root;
-	private Float alpha;
+	private double alpha;
 	private int maxNodeCount, nodeCount;
 	
 	//----- Tree Constructor -----//
-	public Tree(final float alpha, final int key){
+	public Tree(final double alpha, final int key){
 		
 		this.alpha = alpha;
 		root = new Node(key);
@@ -24,14 +16,14 @@ public class Tree {
 	}
 	
 	//----- Insert -----//
-	public void insert(Tree tree, final int key){
+	public void insert(final int key){
 		
-		if(tree.root == null) return;
+		if(this.root == null) return;
 		
 		nodeCount++;
 		maxNodeCount = Math.max(maxNodeCount, nodeCount);
 		
-		Node p = tree.root;
+		Node p = this.root;
 		
 		while(true){
 			if(key < p.getKey()){ 		
@@ -43,10 +35,11 @@ public class Tree {
 					
 					// Check if the inserted node is too deep.
 					if(tooDeep(p.getLeft())){
-						Node SG = findScapeGoat(tree, p.getLeft());
 						
-						System.out.println("\nCalling rebuild.");
-						rebuildTree(size(SG), SG); 
+						Node SG = findScapeGoat(p.getLeft());
+						
+						if(SG != null)
+							rebuildTree(SG);
 					}
 					
 					return;
@@ -61,9 +54,11 @@ public class Tree {
 					p.getRight().setParent(p);
 					
 					if(tooDeep(p.getRight())){
-						Node SG = findScapeGoat(tree, p.getRight());
-						System.out.println("Calling rebuild.");
-						rebuildTree(size(SG), SG); 
+
+						Node SG = findScapeGoat(p.getRight());
+						
+						if(SG != null)
+							rebuildTree(SG); 
 					}
 					
 					return;
@@ -73,16 +68,13 @@ public class Tree {
 	}
 	
 	//----- Tree Search -----//
-	public boolean search(final Tree tree, final int key){
+	public boolean search(final int key){
 		
-		if(tree == null){ 
-			System.out.println("Tree is null."); // DEBUG
+		if(this.root == null){ 
 			return false;
 		}
 		
-		// System.out.println("Node = " + key + " size = " + (size(search(tree.root, key))));	// DEBUG
-		
-		if(search(tree.root, key) == null) return false;
+		if(search(this.root, key) == null) return false;
 		else return true;
 		
 	}
@@ -140,98 +132,65 @@ public class Tree {
 		return;
 	}
 
-	//----- Tree Delete -----//
-	public void delete(final Tree tree, final int key){
+	//----- Delete -----//
+	public void delete(int key){
 		
-		Node toDelete, replacement;
-		
-		if(tree == null){
-			System.out.println("DELETE: tree is null.");
-			return;
-		}
-
-		delete(tree, tree.root, key);
-		
-		fixParents(tree.root);
-	}
-	
-	//----- Node Delete -----//
-	private void delete(final Tree tree, final Node root, final int key){
-		
-		Node toDelete, replacement;
-		
-		// Find which node to delete.
-		if((toDelete = search(root, key)) != null){
+		if(search(this.root, key) != null){
 			
-			nodeCount--;
-			
-			// Find it's replacement node.
-			replacement = findReplacement(toDelete);
-			
-			// Deleting a node that is not the root.
-			if(toDelete.getParent() != null){
-				
-				// Node to be deleted is a left child
-				if(toDelete.getKey() < toDelete.getParent().getKey()){
-					
-					// Parent of node to delete points to the replacement node.
-					// Take into account toDelete might == replacement
-					if(toDelete != replacement && toDelete.getParent() != null)
-						toDelete.getParent().setLeft(replacement);
-					else{
-						toDelete.getParent().setLeft(null);
-					}
-						
-				}
-				// Node to be deleted is a right child
-				else{
-					
-					// Parent of node to delete points to the replacement node.
-					// Take into account toDelete might == replacement
-					if(toDelete != replacement && toDelete.getParent() != null)
-						toDelete.getParent().setRight(replacement);
-					else
-						toDelete.getParent().setRight(null);
-				}
-			}
-			// Deleting the root.
+			if(root.getLeft() == null && root.getRight() == null) // Delete the root
+				root = null;
 			else{
-				if(replacement != toDelete){
-					// If the replacement is a left/right child, set the parent's left/right child to null. 
-					if(replacement.getKey() < replacement.getParent().getKey())
-						replacement.getParent().setLeft(null);
-					else
-						replacement.getParent().setRight(null);
-					
-					replacement.setParent(null);
-					
-					
-					// Replace the tree's root.
-					tree.setRoot(replacement);
+				this.delete(this.root, key);
+				nodeCount--;
+	    
+				if(nodeCount <= alpha*maxNodeCount){
+					Node flattenedList = flatten(root);
+	     
+					buildTree(flattenedList, size(flattenedList));
+					maxNodeCount = nodeCount;
 				}
-				else{
-					// Remove the tree's root.
-					tree.setRoot(null);
-				}
-				
+	    
+				fixParents(this.root);
 			}
-			
-			// Change to parent to the children of the node to be deleted to the replacement node.
-			if(toDelete.getLeft() != null)
-				toDelete.getLeft().setParent(replacement);
-			if(toDelete.getRight() != null)
-				toDelete.getRight().setParent(replacement);
-			
-			// Make sure the replacement node doesn't point to itself.
-			if(toDelete.getLeft() != replacement)
-				replacement.setLeft(toDelete.getLeft());
-			if(toDelete.getRight() != replacement)
-				replacement.setRight(toDelete.getRight());
-
 		}
-		
+	}
+	 
+	//----- Delete -----//
+	private void delete(Node n, int key){
+		if(key < n.getKey())
+			delete(n.getLeft(), key);
+		else if(key > n.getKey())
+			delete(n.getRight(), key);
+		else{
+			if(n.getLeft() != null && n.getRight() != null){ // Left & Right Children
+				Node successor = findReplacement(n.getRight());
+				n.setKey(successor.getKey());
+				delete(successor, successor.getKey());
+			}
+			else if(n.getLeft() != null){		// Left Child
+				replaceNodeInParent(n, n.getLeft());
+			}
+			else if(n.getRight() != null){	// Right child
+				replaceNodeInParent(n, n.getRight()); 
+			}
+			else{ 							// No children
+				replaceNodeInParent(n, null);
+			}
+		}
 	}
 	
+	//----- Replace Parent Node -----//
+	private void replaceNodeInParent(Node root, Node newValue){
+		if(root.getParent() != null){
+			if(root == root.getParent().getLeft())
+				root.getParent().setLeft(newValue);
+			else
+				root.getParent().setRight(newValue);
+		}
+		if(newValue != null)
+			newValue.setParent(root.getParent());
+	}
+	 
 	//----- Node FindReplacement -----//
 	private Node findReplacement(final Node n){
 		
@@ -266,9 +225,7 @@ public class Tree {
 			p = p.getParent();
 		}
 		
-//		System.out.println("node = " + n.getKey() + ", count = " + count + ", node Count = " + getNodeCount() + ", math thing = " + (Math.floor((Math.log(getNodeCount())/Math.log(1/alpha)))));	// DEBUG
-		
-		if(count > Math.floor((Math.log(getNodeCount())/Math.log(1/alpha))))
+		if(count > Math.floor((float)(Math.log(getNodeCount())/Math.log((float)1/alpha))))
 			return true;
 		else
 			return false;
@@ -276,7 +233,7 @@ public class Tree {
 	}
 	
 	//----- Find the ScapeGoat -----//
-	private Node findScapeGoat(Tree tree, Node n){
+	private Node findScapeGoat(Node n){
 		Node scapeGoat = null;
 		Node p = null;
 		
@@ -284,17 +241,18 @@ public class Tree {
 		if(n.getParent() != null) 
 			p = n.getParent();
 		
-//		int size, sizeL, sizeR;
-//		size = size(p);
-		
-		
 		// Find the scapeGoat nearest to the root (but not the root).
-		while(p.getParent() != null){
-			if((size(p.getLeft()) <= tree.alpha * size(p)) &&
-					(size(p.getRight()) <= tree.alpha*size(p))){
+		while(p != null){
+			
+			if((size(p.getLeft()) <= this.alpha * size(p)) && (size(p.getRight()) <= this.alpha*size(p))){
+				
 				scapeGoat = p;
 			}
-			p = p.getParent();
+			
+			if(p.getParent() != null)
+				p = p.getParent();
+			else
+				p = null;
 			
 			// DEBUG
 //			if(scapeGoat != null)
@@ -307,99 +265,87 @@ public class Tree {
 		return scapeGoat;
 	}
 
+	//----- Rotate Left -----//
+	public Node leftRotate(Node n){
+		if(n.getRight() != null){
+			Node rightChild = n.getRight();
+			n.setRight(rightChild.getRight());
+			rightChild.setRight(rightChild.getLeft());
+			rightChild.setLeft(n.getLeft());
+			n.setLeft(rightChild);
+   
+			int temp = n.getKey();
+			n.setKey(rightChild.getKey());
+			rightChild.setKey(temp);
+		}
+		return n;
+	}
+	 
+	//----- Rotate Right -----//
+	public Node rightRotate(Node n){
+		if(n.getLeft() != null){
+			Node leftChild = n.getLeft();
+			n.setLeft(leftChild.getLeft());
+			leftChild.setLeft(leftChild.getRight());
+			leftChild.setRight(n.getRight());
+			n.setRight(leftChild);
+	   
+			int temp = n.getKey();
+			n.setKey(leftChild.getKey());
+			leftChild.setKey(temp);
+		}
+		return n;
+	}
+	 
 	//----- Flatten -----//
-	private Node flatten(Node x, Node y){
+	public Node flatten(Node n){
 		
-		if(x == null) return y;
+		while(n.getLeft() != null){
+			n = rightRotate(n);
+		}
 		
-		x.setRight(flatten(x.getRight(), y));
+		if (n.getRight() != null){
+			n.setRight(flatten(n.getRight()));
+		}
 		
-		return flatten(x.getLeft(), x);
-		
+		return n;
 	}
-	
-	/* Build breaks everything */
+	 
 	//----- Build Tree -----//
-	private Node buildTree(int n, Node x){
+	public Node buildTree(Node n, int nodeCount){
+		int times = (int) ((int)Math.log(nodeCount)/Math.log(2));
 		
-//		if(n == 1){
-//			return x;
-//		}
+		Node newRoot = n;
 		
-		if(n == 0){
-			x.setLeft(null);
-			return x;
+		for(int i = 0; i < times; i++){
+			newRoot = leftRotate(newRoot);
+			n = newRoot.getRight();
+			
+			for(int j = 0; j < nodeCount/2 - 1; j++){
+				n = leftRotate(n);
+				n = n.getRight();
+			}
+			nodeCount >>= 1;
 		}
-		
-		Node r = buildTree((int)Math.ceil((n-1)/2), x);
-		Node s = buildTree((int)Math.floor((n-1)/2), r.getRight());
-		
-		r.setRight(s.getLeft());
-		s.setLeft(r);
-		
-		return s;
-		
+		return newRoot;
 	}
-	
+	 
 	//----- Rebuild -----//
-	private Node rebuildTree(int n, Node scapeGoat){
+	private void rebuildTree(Node scapeGoat){
 		
-		System.out.println("RebuildTree n = " + n + " scapeGoat = " + scapeGoat.getKey());	// DEBUG
+		Node z = flatten(scapeGoat);
 		
-		// Node w = new Node(-1);
-		Node w = null;
+		buildTree(z, size(scapeGoat));
 		
-		Node p = null; // test
+		// fixParents(scapeGoat);
 		
-		Node z = flatten(scapeGoat, w);
-		
-		Node temp = null;
-		
-		// DEBUG
-		System.out.print("Flatten List: ");
-		p = z;
-		while(p != null){
-			System.out.print(p.getKey() + " ");
-			p = p.getRight();
-		}
-		System.out.println("");
-		
-//		buildTree(n, z);
-		
-		temp = buildTree(n, z);	// temp = the node that gets left out
-		
-		System.out.println("Print the subtree returned from buildTree.");
-		printTree(temp, 0);
-		
-		System.out.println("Return from buildTree = " + temp.getKey());
-// 		System.out.println("ScapeGoat = " + scapeGoat.getKey());
-		
-		if(temp != scapeGoat){
-			scapeGoat.getParent().setRight(temp);
-			temp.setParent(scapeGoat.getParent());
-			temp.setLeft(scapeGoat);
-
-			fixParents(temp);
-		}
-		
-		
-		
-		// maxNodeCount = nodeCount;
-
-//		if(w != null)
-//		return w.getLeft();
-		
-		return temp;
-		
-// 		return null;
-
 	}
 	
 	//----- Tree Print Tree -----//
-	public void printTree(final Tree tree) {
+	public void printTree() {
 		
-		if(tree != null)
-			printTree(tree.getRoot(), 0);
+		if(this.root != null)
+			printTree(this.root, 0);
 	}
 	
 	//----- Node Print Tree -----//
@@ -438,12 +384,12 @@ public class Tree {
 	
 	//----- Setters and Getters -----//
 	public Node getRoot() { return root; }
-	private void setRoot(Node n) { root = n; }
+//	private void setRoot(Node n) { root = n; }
 	
-	private int getMaxNodeCount() { return maxNodeCount; }
-	private void setMaxNodeCount(int val) { maxNodeCount = val; }
+//	private int getMaxNodeCount() { return maxNodeCount; }
+//	private void setMaxNodeCount(int val) { maxNodeCount = val; }
 	
 	private int getNodeCount() { return nodeCount; }
-	private void setNodeCount(int val) { nodeCount = val; }
+//	private void setNodeCount(int val) { nodeCount = val; }
 	
 }

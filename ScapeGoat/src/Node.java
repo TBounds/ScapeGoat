@@ -21,7 +21,7 @@ public class Node {
 	public Node getLeft() 	{ return left; }
 	public Node getRight() 	{ return right; }
 	
-	public void setData(int k)		{ key = k; }
+	public void setKey(int k)		{ key = k; }
 	public void setParent(Node p) 	{ parent = p; }
 	public void setLeft(Node l) 	{ left = l; }
 	public void setRight(Node r) 	{ right = r; }
