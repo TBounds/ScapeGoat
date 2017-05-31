@@ -1,12 +1,14 @@
 Author: Tyler Bounds
+
 Class: CS 450
+
 Date: 11/2/2016
+
 E-mail: tyler.bounds@wsu.edu
+
 Worked with: Stephen Brown, Jordan Curry, and Chris Hight.
 
-#################
-### IMPORTANT ###
-#################
+## IMPORTANT 
 
 I replaced the algorithm's flatten, rebuild, and build with an implementation of the Day Stout Warren 
 algorithm. We asked Professor Mocas if this was satisfactory and she said as long as the algorithm 
@@ -14,16 +16,13 @@ was in place that it would be acceptable.
 		   
 The program does still find the scapegoat and re-balance based on that.
 
-##############
-### Credit ###
-##############
+## Credit 
 
 I based the delete function from the wikipedia page for binary trees.
 	- https://en.wikipedia.org/wiki/Binary_search_tree
 
-###################
-### Description ###
-###################
+
+## Description 
 
 This program takes a text file for input which contains commands on each line. The first command needs
 to be buildtree <alpha> <key> and should only be called once.
@@ -38,9 +37,8 @@ and then rebalances on that scapegoat.
 
 This program checks if the deleted node distrupts the balance and re-balances from the root if it is.
 
-#####################
-### Command Input ###
-#####################
+
+## Command Input
 
 • buildtree <alpha> <key>
 	- Creates the tree with alpha value and root = key.
@@ -58,9 +56,7 @@ This program checks if the deleted node distrupts the balance and re-balances fr
 • traverse
 	- Prints the tree in in a series of lines: node, node's parent, node's left child, node's right child.
 
-######################
-### Files Included ###
-######################
+## Files Included 
 
 • Main.java
 	- The main class which the user will run the program from. Handles the input to the program.
@@ -75,9 +71,8 @@ This program checks if the deleted node distrupts the balance and re-balances fr
 	- This file which contains author's contact info, credits, notes, program description, and instructions
 	  to run load and run the program.
 
-##############################################		
-### Loading/Running the Program in Eclipse ###
-##############################################
+		
+## Loading/Running the Program in Eclipse
 
 1. Download program, an archive file (.zip)
 2. Run Eclipse and create a new Java project named whatever you want.
@@ -94,9 +89,7 @@ This program checks if the deleted node distrupts the balance and re-balances fr
 12. Click the green circle with the white arrow at the top of Eclipse
 13. Observe output in the console.
 
-###############################################
-### Loading/Running the Program in NetBeans ###
-###############################################
+## Loading/Running the Program in NetBeans
 
 The project is in Java, and was made using Eclipse. Below are instructions for building
 the project in Netbeans which is available on the lab computers using Windows:
