@@ -10,7 +10,7 @@ Worked with: Stephen Brown, Jordan Curry, and Chris Hight.
 
 ## IMPORTANT 
 
-I replaced the algorithm's flatten, rebuild, and build with an implementation of the Day Stout Warren 
+I replaced the algorithm's flatten, rebuild, and build with an implementation of the Day-Stout-Warren 
 algorithm. We asked Professor Mocas if this was satisfactory and she said as long as the algorithm 
 was in place that it would be acceptable.
 		   
@@ -30,7 +30,7 @@ to be buildtree <alpha> <key> and should only be called once.
 This program outputs to the console the tree as if it were rotated left onto its side.
 
 This program is a self-balancing, binary search tree which mostly implements the ScapeGoat algorithm
-but also implements the Day Stout Warren for rebuild, build, and flatten.
+but also implements the Day-Stout-Warren algorithm for rebuild, build, and flatten.
 
 This program checks if the inserted node is too deep, based on the alpha weight, finds the scapegoat,
 and then rebalances on that scapegoat.
